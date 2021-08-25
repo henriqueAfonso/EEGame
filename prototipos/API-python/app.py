@@ -7,7 +7,7 @@ class Serv(BaseHTTPRequestHandler):
         controls = json.loads('{"jumpDown":true, "jumpUp":true, "horizontal":5}')        
         
         self.send_response(200)
-        
+        self.send_header("Content-type", "application/json")
         self.end_headers()
         self.wfile.write(bytes(json.dumps(controls), 'utf-8'))
 
