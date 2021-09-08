@@ -16,7 +16,7 @@ public class Cabeca : MonoBehaviour
                 break;
 
             case "corpo":
-                Time.timeScale = 0;
+                controlador.GameOver();
                 break;
         }    
     }

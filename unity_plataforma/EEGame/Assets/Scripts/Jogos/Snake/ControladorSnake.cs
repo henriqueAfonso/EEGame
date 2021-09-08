@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
 public class ControladorSnake : MonoBehaviour
 {
     public enum Direcoes
@@ -20,12 +22,9 @@ public class ControladorSnake : MonoBehaviour
     public int linhas = 14;
     public int colunas = 29;
     public Text pontuacao;
-
-    void Start()
-    {
-        StartCoroutine("Movimentacao");
-        SetComida();
-    }
+    public GameObject panelGameOver;
+    public GameObject panelInicioJogo;
+    public GameObject btn_Jogar;
 
     void Update()
     {
@@ -93,7 +92,43 @@ public class ControladorSnake : MonoBehaviour
         int x = Random.Range(((colunas - 1) / 2) * -1, (colunas - 1) / 2);
         int y = Random.Range(((linhas - 1) / 2) * -1, (linhas - 1) / 2);
 
+        foreach(Transform t in corpo)
+        {
+            if (t.position.x == x && t.position.y == y)
+            {
+                SetComida();
+                break;
+            }
+        }
         comidaPreFab.position = new Vector2(x * passo, y * passo);
     }
-}
 
+    public void GameOver()
+    {
+        panelGameOver.SetActive(true);
+        StopCoroutine("Movimentacao");
+        EventSystem.current.SetSelectedGameObject(btn_Jogar);
+    }
+
+    public void Jogar()
+    {
+        if(corpo.Count > 2)
+        {
+            for(int i = corpo.Count - 1; i > 1; i--)
+            {
+                Destroy(corpo[i].gameObject);
+                corpo.RemoveAt(i);    
+            }
+        }
+            
+        cabeca.position = new Vector3(0, 0, 0);
+        corpo[0].position = new Vector3((float)-0.6,0,0);
+        corpo[1].position = new Vector3((float)-1.2, 0, 0);
+        direcao = Direcoes.DIREITA;
+        SetComida();
+        pontuacao.text = "Pontuacao: 0";   
+        panelGameOver.SetActive(false);
+        panelInicioJogo.SetActive(false);
+        StartCoroutine("Movimentacao");
+    }
+}
